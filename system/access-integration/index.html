@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.10.2">
 <title data-rh="true">AccessとのCSV連携 | 新日本泳法システム　操作ガイド</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://nihoneihou-ops.github.io/nihoneihou-manual/system/access-integration"><meta data-rh="true" property="og:locale" content="ja"><meta data-rh="true" name="docusaurus_locale" content="ja"><meta data-rh="true" name="docsearch:language" content="ja"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="AccessとのCSV連携 | 新日本泳法システム　操作ガイド"><meta data-rh="true" name="description" content="ジュニア・シニアでは、Accessを継続利用しながら新システムとの間でCSVを受け渡します。ファイルの工程・出力日時を取り違えないことが重要です。"><meta data-rh="true" property="og:description" content="ジュニア・シニアでは、Accessを継続利用しながら新システムとの間でCSVを受け渡します。ファイルの工程・出力日時を取り違えないことが重要です。"><link data-rh="true" rel="canonical" href="https://nihoneihou-ops.github.io/nihoneihou-manual/system/access-integration"><link data-rh="true" rel="alternate" href="https://nihoneihou-ops.github.io/nihoneihou-manual/system/access-integration" hreflang="ja"><link data-rh="true" rel="alternate" href="https://nihoneihou-ops.github.io/nihoneihou-manual/system/access-integration" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"AccessとのCSV連携","item":"https://nihoneihou-ops.github.io/nihoneihou-manual/system/access-integration"}]}</script><link rel="stylesheet" href="/nihoneihou-manual/assets/css/styles.c9661f18.css">
-<script src="/nihoneihou-manual/assets/js/runtime~main.1ad3c995.js" defer="defer"></script>
+<script src="/nihoneihou-manual/assets/js/runtime~main.4682025e.js" defer="defer"></script>
 <script src="/nihoneihou-manual/assets/js/main.069630c2.js" defer="defer"></script>
 </head>
 <body>
@@ -39,18 +39,34 @@
 <h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="実施">実施<a href="#実施" class="hash-link" aria-label="実施 への直接リンク" title="実施 への直接リンク" translate="no">​</a></h3>
 <p>新システムで競技の記録入力・確認・結果確定を行います。競技中の操作は、記録係・通告係の各手順を参照してください。</p>
 <h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="結果">結果<a href="#結果" class="hash-link" aria-label="結果 への直接リンク" title="結果 への直接リンク" translate="no">​</a></h3>
+<p>20002は、対象性別の競技がすべて終了した後だけでなく、<strong>Accessへの返却が必要であれば競技途中でも実行できます</strong>。</p>
+<p>20002は対象性別のRaw全件を含む<strong>全件置換用CSV</strong>です。Accessの既存テーブルへそのまま追加すると同じ泳者が重複するため、取込前に対象テーブルの既存レコードを削除してから、同じテーブルへCSVを追加インポートします。テーブル自体は削除・再作成しません。</p>
 <ol>
-<li class="">競技結果が確定したら、帳票 <code>20002｜泳法競技ジュニア結果CSV出力</code> を実行します。</li>
+<li class="">Accessへ返却するタイミングで、帳票 <code>20002｜泳法競技ジュニア結果CSV出力</code> を実行します。</li>
 <li class="">PCへダウンロードされたCSVについて、ファイル名、出力日時、性別を確認します。</li>
-<li class="">CSVを編集せず、Accessの対応するテーブルへ取り込みます。<!-- -->
+<li class="">CSVの行数が、対象性別の取込Rawに存在する全競技者数と一致することを確認します。</li>
+<li class=""><code>C:\日本泳法\大会データ</code> 配下にある <code>泳J男</code>、<code>泳J女</code>、<code>泳競男</code>、<code>泳競女</code> の4ファイルをバックアップします。</li>
+<li class="">Accessで対象テーブルを開き、<strong>既存レコードだけを全件削除</strong>します。テーブル定義・フィールド・インデックス等を維持するため、テーブル自体は削除しません。<!-- -->
 <ul>
 <li class="">男子CSV: <code>泳J男</code></li>
 <li class="">女子CSV: <code>泳J女</code></li>
 </ul>
 </li>
+<li class="">削除後、対象テーブルが0件になったことを確認します。</li>
+<li class="">CSVを編集せず、Accessのテキストインポートで同じテーブルへレコードを追加します。<!-- -->
+<ul>
+<li class="">区切り記号付き</li>
+<li class="">フィールド区切り記号: カンマ</li>
+<li class="">コードページ: Unicode (UTF-8)</li>
+<li class="">先頭行をフィールド名として使う</li>
+</ul>
+</li>
 <li class="">Accessへの取込後、対象件数と性別を確認します。</li>
+<li class="">通常結果と棄権者など代表レコードをAccess画面で確認します。</li>
 <li class="">以後の処理はAccess側で実施します。</li>
 </ol>
+<p>20002のCSVは、取込Rawの全競技者を残した状態で作成されます。記録システム側で <code>確定フラグ=TRUE</code> の泳者だけ成績・得点が最新結果へ更新され、未確定者はRaw値のまま残ります。そのため、競技途中にAccessへ返却しても未実施・未確定の競技者がCSVから欠落しません。</p>
+<p>既存レコードを削除せずに20002を追加インポートすると重複データが生じます。誤って追加した場合は、そのまま運用を続けず、バックアップへ戻すなどして全件置換をやり直してください。</p>
 <p>CSVをExcelで開いて上書き保存しないでください。</p>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="2-シニア">2. シニア<a href="#2-シニア" class="hash-link" aria-label="2. シニア への直接リンク" title="2. シニア への直接リンク" translate="no">​</a></h2>
 <p>基本フロー:</p>
@@ -122,6 +138,7 @@
 <li class="">以後の処理はAccess側で実施します。</li>
 </ol>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="3-rawデータの注意">3. Rawデータの注意<a href="#3-rawデータの注意" class="hash-link" aria-label="3. Rawデータの注意 への直接リンク" title="3. Rawデータの注意 への直接リンク" translate="no">​</a></h2>
+<p>ジュニアの <code>泳J男取込Raw</code>・<code>泳J女取込Raw</code> は、大会前にAccessから受領したエントリー確定データを原本として保持します。20002はこのRaw全件を出力ベースとし、確定済み泳者の結果だけを出力時に差し替えます。競技途中の結果を反映するためにRaw自体を手修正しないでください。</p>
 <p>シニアのRawは、工程ごとのAccess原本スナップショットとして扱います。</p>
 <ul>
 <li class="">予選実施前: 大会開始前のAccess確定データ</li>
@@ -134,10 +151,12 @@
 <li class="">出力日時が今回の工程と一致している</li>
 <li class="">男子・女子を取り違えていない</li>
 <li class="">20002 / 30002 / 30003を混同していない</li>
+<li class="">20002はCSV行数が対象Rawの全競技者数と一致している</li>
+<li class="">20002取込前に対象Accessテーブルの既存レコードを全削除している</li>
 <li class="">同種CSVが複数ある場合は最新ファイルを明確にする</li>
 <li class="">CSVを開いて確認しても上書き保存しない</li>
 </ul>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="5-エラー時">5. エラー時<a href="#5-エラー時" class="hash-link" aria-label="5. エラー時 への直接リンク" title="5. エラー時 への直接リンク" translate="no">​</a></h2>
-<p>結果CSVが出ない場合は、競技結果の確定状態と帳票出力メッセージを確認します。Rawの内容に疑義がある場合は、手修正せずAccess側の正しいデータから工程を戻して確認してください。</p></div></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="ドキュメントページ"><a class="pagination-nav__link pagination-nav__link--prev" href="/nihoneihou-manual/system/live-program-publication"><div class="pagination-nav__sublabel">前へ</div><div class="pagination-nav__label">ライブプログラムの進行・公開・お知らせを管理する</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/nihoneihou-manual/system/report-output"><div class="pagination-nav__sublabel">次へ</div><div class="pagination-nav__label">帳票・CSVを出力する</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#1-ジュニア" class="table-of-contents__link toc-highlight">1. ジュニア</a><ul><li><a href="#エントリー" class="table-of-contents__link toc-highlight">エントリー</a></li><li><a href="#実施" class="table-of-contents__link toc-highlight">実施</a></li><li><a href="#結果" class="table-of-contents__link toc-highlight">結果</a></li></ul></li><li><a href="#2-シニア" class="table-of-contents__link toc-highlight">2. シニア</a><ul><li><a href="#エントリー-1" class="table-of-contents__link toc-highlight">エントリー</a></li><li><a href="#予選実施" class="table-of-contents__link toc-highlight">予選実施</a></li><li><a href="#予選結果" class="table-of-contents__link toc-highlight">予選結果</a></li><li><a href="#決勝エントリー" class="table-of-contents__link toc-highlight">決勝エントリー</a></li><li><a href="#決勝実施" class="table-of-contents__link toc-highlight">決勝実施</a></li><li><a href="#決勝結果" class="table-of-contents__link toc-highlight">決勝結果</a></li></ul></li><li><a href="#3-rawデータの注意" class="table-of-contents__link toc-highlight">3. Rawデータの注意</a></li><li><a href="#4-csvを取り違えないための確認" class="table-of-contents__link toc-highlight">4. CSVを取り違えないための確認</a></li><li><a href="#5-エラー時" class="table-of-contents__link toc-highlight">5. エラー時</a></li></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer"><div class="container container-fluid"><div class="footer__bottom text--center"><div class="footer__copyright">公益財団法人日本水泳連盟 日本泳法委員会 / 2026</div></div></div></footer></div>
+<p>結果CSVが出ない場合は、帳票出力メッセージを確認します。20002ではRawの15列構成、id重複、確定済み泳者とRawの照合等に問題がある場合も出力を停止します。Rawの内容に疑義がある場合は、手修正せずAccess側の正しいデータから工程を戻して確認してください。</p></div></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="ドキュメントページ"><a class="pagination-nav__link pagination-nav__link--prev" href="/nihoneihou-manual/system/live-program-publication"><div class="pagination-nav__sublabel">前へ</div><div class="pagination-nav__label">ライブプログラムの進行・公開・お知らせを管理する</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/nihoneihou-manual/system/report-output"><div class="pagination-nav__sublabel">次へ</div><div class="pagination-nav__label">帳票・CSVを出力する</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#1-ジュニア" class="table-of-contents__link toc-highlight">1. ジュニア</a><ul><li><a href="#エントリー" class="table-of-contents__link toc-highlight">エントリー</a></li><li><a href="#実施" class="table-of-contents__link toc-highlight">実施</a></li><li><a href="#結果" class="table-of-contents__link toc-highlight">結果</a></li></ul></li><li><a href="#2-シニア" class="table-of-contents__link toc-highlight">2. シニア</a><ul><li><a href="#エントリー-1" class="table-of-contents__link toc-highlight">エントリー</a></li><li><a href="#予選実施" class="table-of-contents__link toc-highlight">予選実施</a></li><li><a href="#予選結果" class="table-of-contents__link toc-highlight">予選結果</a></li><li><a href="#決勝エントリー" class="table-of-contents__link toc-highlight">決勝エントリー</a></li><li><a href="#決勝実施" class="table-of-contents__link toc-highlight">決勝実施</a></li><li><a href="#決勝結果" class="table-of-contents__link toc-highlight">決勝結果</a></li></ul></li><li><a href="#3-rawデータの注意" class="table-of-contents__link toc-highlight">3. Rawデータの注意</a></li><li><a href="#4-csvを取り違えないための確認" class="table-of-contents__link toc-highlight">4. CSVを取り違えないための確認</a></li><li><a href="#5-エラー時" class="table-of-contents__link toc-highlight">5. エラー時</a></li></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer"><div class="container container-fluid"><div class="footer__bottom text--center"><div class="footer__copyright">公益財団法人日本水泳連盟 日本泳法委員会 / 2026</div></div></div></footer></div>
 </body>
 </html>
